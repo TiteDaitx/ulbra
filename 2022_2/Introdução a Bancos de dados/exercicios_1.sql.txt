@@ -78,3 +78,4 @@ SELECT valor,
   valor * 1.20 AS mais_vinte_porcento
   FROM alugueis;
 
+modifiquei pelo github
