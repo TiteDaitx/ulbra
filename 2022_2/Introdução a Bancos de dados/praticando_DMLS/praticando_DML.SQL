@@ -95,3 +95,4 @@ SELECT nome,sum(id_estudante) as soma_ids_estudantes
 FROM ESTUDANTES
 GROUP by nome asc
 HAVING soma_ids_estudantes > 12;
+
