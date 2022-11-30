@@ -1,0 +1,97 @@
+
+CREATE database PRATICANDO_DML;
+ 
+CREATE TABLE ESTUDANTES (
+    ID_ESTUDANTE INT AUTO_INCREMENT PRIMARY KEY,
+    NOME VARCHAR (40) NOT NULL,
+    SOBRENOME VARCHAR (40)
+);
+
+CREATE TABLE AULAS (
+    ID_AULA INT AUTO_INCREMENT PRIMARY KEY,
+    TITULO VARCHAR (20) NOT NULL,
+    DESCRICAO VARCHAR (60)
+);
+
+CREATE TABLE MATRICULAS ( 
+    ID_MATRICULA INT AUTO_INCREMENT PRIMARY KEY,
+    DATA_MATRICULA DATE,
+    ID_ESTUDANTE INT,
+    ID_AULA INT,
+    CONSTRAINT FK_ID_ESTUDANTE 
+    FOREIGN KEY (ID_ESTUDANTE) REFERENCES ESTUDANTES (ID_ESTUDANTE)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+    CONSTRAINT FK_ID_AULA
+    FOREIGN KEY (ID_AULA) REFERENCES AULAS (ID_AULA)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+);
+
+--INSERTS
+
+INSERT INTO ESTUDANTES (ID_ESTUDANTE, NOME, SOBRENOME) 
+VALUES 
+(1, "PAULO","LIMA"),
+(2, "RAFAEL","GOMES"),
+(3, "MARCOS","SILVA"),
+(4, "JESSICA","LIMA"),
+(5, "PAULO","LIMA"),
+(6, "PAULO","GOMES"),
+(7, "MARCOS","SILVA"),
+(8, "MARCOS","LIMA");
+
+SELECT * FROM ESTUDANTES
+
+INSERT INTO AULAS (ID_AULA, TITULO, DESCRICAO)
+VALUES 
+(1, 'Banco de Dados','comandos ddls e dmls'),
+(2, 'Programacao', 'Java classes e interfaces'),
+(3, 'Redes', 'Protocolos IPV6 e IPV4'),
+(4, 'Sistemas Operacional','Itroducao ao linux');
+
+SELECT * FROM AULAS
+
+INSERT INTO MATRICULAS (ID_MATRICULA, DATA_MATRICULA,ID_ESTUDANTE,ID_AULA)
+VALUES 
+(1, '2022-01-10',1,4),
+(2, '2022-04-20',2,3),
+(3, '2022-03-15',3,2),
+(4, '2022-06-30',4,1),
+(5, '2022-01-15',5,4),
+(6, '2022-05-27',6,3),
+(7, '2022-03-10',7,2),
+(8, '2022-06-29',8,1);
+
+SELECT * FROM MATRICULAS
+
+--Faça uma modelagem com 3 tabelas que de condições de extrair os dados usando:
+
+-- função de agregação (minimo 2. ex. Sum, count)
+SELECT max(data_matricula)as Maior_data
+FROM MATRICULAS
+
+SELECT count(id_estudante) as numero_de_estudantes
+FROM ESTUDANTES
+WHERE sobrenome = 'lima'
+
+-- joins
+select a.TITULO, a.DESCRICAO, m.DATA_MATRICULA
+from  AULAS a INNER join MATRICULAS m on a.ID_AULA = m.ID_MATRICULA
+ORDER by a.TITULO asc;
+
+-- group by
+select a.TITULO, a.DESCRICAO, m.DATA_MATRICULA
+from  AULAS a INNER join MATRICULAS m on a.ID_AULA = m.ID_MATRICULA
+group by a.ID_AULA > 2;
+
+select a.ID_AULA, a.TITULO, m.DATA_MATRICULA, e.nome as Nome_Aluno, e.sobrenome, e.ID_ESTUDANTE as Numero_aluno
+from  AULAS a INNER join MATRICULAS m on a.ID_AULA = m.ID_MATRICULA
+			INNER join ESTUDANTES e on m.ID_MATRICULA = e.ID_ESTUDANTE
+GROUP by e.nome DESC;
+
+-- having
+SELECT nome,sum(id_estudante) as soma_ids_estudantes
+FROM ESTUDANTES
+GROUP by nome asc
+HAVING soma_ids_estudantes > 12;

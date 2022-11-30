@@ -1,0 +1,162 @@
+INSERT INTO editoras (id, nome)
+VALUES
+('1', 'Mirandela Editora'),
+('2', 'Editora Via-Norte'),
+('3', 'Editora Ilhas Tijucas'),
+('4', 'Maria Jose Editora');
+
+INSERT INTO assuntos (id, descricao)
+VALUES
+('B', 'Banco de Dados'),
+('P', 'Programação'),
+('R', 'Redes'),
+('S', 'Sistemas Operacionais');
+alter table livros add column preco decimal(12,2) default 0;
+INSERT INTO livros (id, titulo, preco, data_lancamento, editora_id, assunto_id)
+VALUES
+('1', 'Bancos de Dados para a WEB', 31.20, '1999-01-10', '1', 'B'),
+('2', 'Programando em Linguagem C', 30.00, '1997-10-01', '1', 'P'),
+('3', 'Programando em Linguagem C++', 111.50, '1998-11-01', '3', 'P'),
+('4', 'Bancos de Dados na Bioinformática', 48.00, null, '2', 'B'),
+('5', 'Redes de Computadores', 42.00, '1996-09-01', '2', 'R');
+
+INSERT INTO autores (id, nome)
+VALUES
+('1', 'Roberta Del Gato'),
+('2', 'Ricardo Yago Brito'),
+('3', 'Elaine Lívia Moura'),
+('4', 'Carlos Eduardo Lima'),
+('5', 'Isabela da Rocha');
+
+insert into autores_livros (autor_id, livro_id)
+	values
+		(1,1),
+        (1,2),
+        
+        (2,1),
+        (2,3),
+        (2,4),
+        
+        (3,4),
+        (4,4),
+        (5,5),
+        (2,5),
+        (3,5),
+        (4,5);
+
+
+--3
+    --a) Monte um comando para excluir da tabela livros aqueles que possuem o código maior ou igual a 2, que possuem o preço maior que R$ 50,00 e que já foram lançados.
+        delete 
+            from livros
+                where id_livro >=2 and preco > 50,00 and lancamento < current date;
+
+                select*from livros;
+
+    --b) Escreva o comando que seleciona as colunas NOME, CPF e ENDERECO, da tabela AUTOR, para aqueles que possuem a palavra ‘joão’ no nome.
+        select nome, cpf, endereco
+            from autores
+                where nome like "%João%";
+
+    --c) Excluir o livro cujo título é ‘BANCO DE DADOS DISTRIBUÍDO’ ou ‘BANCOS DE DADOS DISTRIBUÍDOS’. Somente essas duas opções devem ser consideradas.
+        delete 
+            from livros
+                where titulo like 'BANCOS_ DE_ DADO_DISTRIBUÍDOS_';
+                
+    --d) Selecione o nome e o CPF de todos os autores que nasceram após 01 de janeiro de 1990.
+        SELECT nome,cpf 
+            FROM autores 
+                WHERE data_nascimento > '1990-01-01';
+                
+    --e) Selecione a matrícula e o nome dos autores que possuem RIO DE JANEIRO no seu endereço.
+        SELECT matricula, nome
+            FROM autores 
+                WHERE endereco LIKE '%Rio de Janeiro%';
+
+    --f) Atualize para zero o preço de todos os livros onde a data de lançamento for nula ou onde seu preço atual for inferior a R$ 55,00.
+        SELECT preco,preco = 00.00 AS novo_preco
+                FROM livros
+                    WHERE lancamento = '0000-00-00' || preco < 55.00;
+
+        UPDATE set preco = 00.00 
+                FROM livros
+                    WHERE lancamento is null OR preco < 55.00;
+
+    --g) Exclua todos os livros onde o assunto for diferente de ‘S’, ‘P’, ou ‘B’.
+        delete 
+            from livros
+                where assunto_id <> 'S' AND assunto_id <> 'P' AND assunto_id <> 'B';
+         delete *
+            from livros
+                where assunto_id NOT IN ('S','P','B');
+
+    --h) Escreva o comando para contar quantos são os autores cadastrados na tabela AUTORES.
+        SELECT COUNT(ID)
+            FROM autores;
+
+    --i) Escreva o comando que apresenta qual o número médio de autores de cada livro. Você deve utilizar, novamente, a tabela AUTOR_LIVRO
+    SELECT AVG (Quantos)   FROM (
+        SELECT livro_id ,COUNT(autor_id) AS Quantos
+            FROM autores_livros;
+                group by livro_id
+     ) AS minha_tabela;
+
+    --j) Apresente o comando SQL para gerar uma listagem dos códigos dos livros que possuem a menos dois autores.    
+        SELECT livro_id ,COUNT(autor_id) AS Quantos
+            FROM autores_livros;
+                group by livro_id
+                    having Quantos >= 2;
+
+    --k) Escreva o comando para apresentar o preço médio dos livros por código de editora. Considere somente aqueles que custam mais de R$ 45,00.
+        SELECT editora_id AVG (preco) AS preco
+            FROM livros 
+                WHERE preco > 45.00;
+                    group by editora_id;
+
+    --l) Apresente o preço máximo, o preço mínimo e o preço médio dos livros cujos assuntos são ‘S’ ou ‘P’ ou ‘B’, para cada código de editora.
+        SELECT  min(preco) AS minimo ,max(preco), AS maximo  avg(preco) AS medio
+             FROM livros
+                WHERE id_assunto IN( 'P' ,'B', 'S')
+                    group by id_editora;
+
+    --m) Altere o comando do exercício anterior para só considerar os livros que já foram lançados (data de lançamento inferior a data atual) e cujo o preço máximo é inferior a R$ 100,00.
+        SELECT  max(preco), AS maximo < 100.00
+             FROM livros
+                WHERE data_lancamento < current_date
+                     HAVING  maximo< 100.00
+     --4
+    --a)Estão sendo estudados aumentos nos preços dos livros. 
+    --Escreva o comando SQL que retorna uma listagem contendo o titulo dos livros,
+    -- e mais três colunas: uma contendo os preços dos livros acrescidos de 10% (deve ser chamada de ‘Opção_1’), 
+    -- a segunda contendo os preços acrescidos de 15% (deve ser chamada de ‘Opção_2’) e a terceira contendo os preços dos livros acrescidos de 20% (deve ser chamada de ‘Opção_3’).
+    --Somente devem ser considerados livros que já tenham sido lançados.
+
+        SELECT titulo, preco, preco*1.10 AS opcao1, preco*1.15 AS opcao2, preco*1.20 AS opcao3 
+			FROM livros
+				WHERE lancamentos > '0000-00-00';
+-- VErificar  
+
+    --b)Escreva o comando SQL que apresenta uma listagem contendo o código da editora,
+     --o nome da editora, a sigla do assunto e o titulo dos livros que já foram lançados.
+     --Os dados devem estar em ordem decrescente de preço, e ascendente de código da editora e de título do livro.
+	
+    SELECT E.ID, E.NOME, L,ASSUNTO_ID, L.titulo,L.PRECO
+    FROM livros
+        INNER jOIN EDITORAS E ON L. EDITORA_ID = E.ID 
+            WHERE L.lancamento <= current DATE
+                ORDER BY PRECO DESC AND E.ID ASC
+
+--c)Escreva o comando que apresente uma listagem dos nomes dos autores e do seu ano e mês de 
+    --nascimento, para os autores brasileiros e que tem livros ainda não lançados. A listagem deve estar
+    --ordenada em ordem crescente de nome.
+
+--d)Escreva o comando que retorna o nome dos autores e o título dos livros de sua autoria. A listagem 
+--deve estar ordenada pelo nome do autor, mostrar somente os livros já lançados.
+
+--e)Monte a consulta SQL que retorna as editoras que publicaram livros escritos pela autora 'Ana da Silva'
+
+--f)FUS (faça um SQL) que apresente o título do livro e o nome da editora que o publica para todos os
+--livros que custam menos que 50 reais.
+    
+--g)FUS que apresente o CPF, nome do autor e o preço máximo dos livros de sua autoria. Apresente 
+--somente as informações para os autores cujo preço máximo for superior a 50.
